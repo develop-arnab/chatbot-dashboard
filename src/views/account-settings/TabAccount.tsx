@@ -25,7 +25,7 @@ import FormControlLabel from '@mui/material/FormControlLabel'
 import Radio from '@mui/material/Radio'
 
 // const baseURL = "http://localhost:4000";
-const baseURL = process.env.BASE_URL
+const baseURL = process.env.NEXT_PUBLIC_BASE_URL
 const ImgStyled = styled('img')(({ theme }) => ({
   width: 120,
   height: 120,

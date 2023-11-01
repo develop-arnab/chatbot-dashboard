@@ -63,7 +63,7 @@ const FormControlLabel = styled(MuiFormControlLabel)<FormControlLabelProps>(({ t
 }))
 
 // const baseURL = "http://localhost:4000";
-const baseURL = process.env.BASE_URL
+const baseURL = process.env.NEXT_PUBLIC_BASE_URL
 const LoginPage = () => {
   // ** State
   const [values, setValues] = useState<State>({
