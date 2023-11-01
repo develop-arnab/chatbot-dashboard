@@ -9,6 +9,7 @@
     ],
     "pretty": true,
     "allowJs": true,
+    "noEmitHelpers": true,
     "importHelpers": true,
     "skipLibCheck": true,
     "strict": true,
