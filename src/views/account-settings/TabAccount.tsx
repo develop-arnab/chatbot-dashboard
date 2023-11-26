@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState, ElementType, ChangeEvent, SyntheticEvent } from 'react'
+import { useState, useEffect, ElementType, ChangeEvent, SyntheticEvent } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -55,12 +55,16 @@ const TabAccount = () => {
   const [openAlert, setOpenAlert] = useState<boolean>(true)
   const [imgSrc, setImgSrc] = useState<string>('/images/avatars/1.png')
 
+
+  useEffect(() => {
+    retrieveChatbot()
+  },[])
   const [chatbot, setChatbot] = useState({
     name: '',
     room: '',
     email: '',
     company: '',
-    info: 'The name’s John Deo. I am a tireless seeker of knowledge, occasional purveyor of wisdom and also, coincidentally, a graphic designer. Algolia helps businesses across industries quickly create relevant 😎, scalable 😀, and lightning 😍 fast search and discovery experiences.',
+    info: '',
     gender: 'male',
     role: 'admin',
     status: 'active'
@@ -76,37 +80,56 @@ const TabAccount = () => {
     }
   }
 
-  const saveChatBot = (fieldName : any, value: any) => {
+  const saveChatBot = (fieldName: any, value: any) => {
     setChatbot({
       ...chatbot,
       [fieldName]: value
     })
   }
 
+  const retrieveChatbot = () => {
+    const token = localStorage.getItem('accessToken')
+
+    if (token) {
+      const config = {
+        headers: {
+          Authorization: token
+        }
+      }
+      axios.get(`${baseURL}/api/chatbot-info`, config).then(response => {
+        console.log('res me ', response)
+        if (response) {
+          console.log('chatbot-info ', response)
+          setChatbot(response.data.Chatbot)
+        } else {
+          console.log('INVALID USER ')
+        }
+      })
+    }
+  }
+
   const saveAndUpdateChatBot = () => {
     console.log('MY CHATBOT ', chatbot)
 
-    const token = localStorage.getItem("accessToken")
-    console.log("TOKEN ", token)
+    const token = localStorage.getItem('accessToken')
+    console.log('TOKEN ', token)
     const config = {
       headers: {
-        Authorization: token,
+        Authorization: token
       }
     }
-    
+
     const body = {
       chatbot: chatbot
     }
-    axios
-    .post(`${baseURL}/api/create-chatbot`, body, config)
-    .then((response) => {
-      console.log("res me ", response);
-      if(response) {
-          console.log("UPDATED ", response)
+    axios.post(`${baseURL}/api/create-chatbot`, body, config).then(response => {
+      console.log('res me ', response)
+      if (response) {
+        console.log('UPDATED ', response)
       } else {
-        console.log("INVALID USER ")
+        console.log('INVALID USER ')
       }
-    });
+    })
   }
 
   return (
@@ -203,7 +226,13 @@ const TabAccount = () => {
           <Grid item xs={12} sm={6}>
             <FormControl>
               <FormLabel sx={{ fontSize: '0.875rem' }}>Gender</FormLabel>
-              <RadioGroup onChange={e => saveChatBot('gender', e.target.value)} row defaultValue='male' aria-label='gender' name='account-settings-info-radio'>
+              <RadioGroup
+                onChange={e => saveChatBot('gender', e.target.value)}
+                row
+                defaultValue='male'
+                aria-label='gender'
+                name='account-settings-info-radio'
+              >
                 <FormControlLabel value='male' label='Male' control={<Radio />} />
                 <FormControlLabel value='female' label='Female' control={<Radio />} />
                 <FormControlLabel value='other' label='Other' control={<Radio />} />
@@ -219,7 +248,7 @@ const TabAccount = () => {
               minRows={2}
               placeholder='Bio'
               onChange={e => saveChatBot('info', e.target.value)}
-              defaultValue='The name’s John Deo. I am a tireless seeker of knowledge, occasional purveyor of wisdom and also, coincidentally, a graphic designer. Algolia helps businesses across industries quickly create relevant 😎, scalable 😀, and lightning 😍 fast search and discovery experiences.'
+              defaultValue={chatbot.info}
             />
           </Grid>
 
